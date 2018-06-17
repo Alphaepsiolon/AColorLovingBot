@@ -1,0 +1,58 @@
+"""
+#To track a coloured object from ipwebcam
+import urllib
+import cv2 as cv
+import numpy as np
+
+
+url  = 'http://192.168.0.101:8080/shot.jpg'
+
+def image_download():
+    
+    #Downloads the image sent fro the camera at a certain framerate
+    
+
+    while True:
+        #Use urllib to get the image from the adresse
+        imgStream = urllib.urlopen(url)
+
+        #Numpy to convert into a array
+        imgNp = np.array(bytearray(imgStream.read()),dtype = np.uint8)
+
+        #Decode the image into an cv usable format
+        img = cv.imdecode(imgNp,-1)
+
+        #Show the image
+        cv.imshow('Test',img)
+
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+    
+
+#Call the image function to get the image from the javascript
+image_download()
+
+
+"""
+import numpy as np
+import cv2 as cv
+import time
+
+cap = cv2.VideoCapture('http://192.168.0.101:8080/video')
+
+while(cap.isOpened()):  # check !
+    # capture frame-by-frame
+    ret, frame = cap.read()
+
+    if ret: # check ! (some webcam's need a "warmup")
+        # our operation on frame come here
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Display the resulting frame
+        cv.imshow('frame', gray)
+
+    if cv.waitKey(1) & 0xFF == ord('q'):
+        break
+# When everything is done release the capture
+cap.release()
+cv.destroyAllWindows()

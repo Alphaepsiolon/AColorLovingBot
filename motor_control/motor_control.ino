@@ -20,11 +20,12 @@ void setup()
   pinMode(ENABLE,OUTPUT);
 
   //Starting Serial communication at required baud rate
-  Serial.begin(38400);
+  Serial.begin(9600);
+  Serial3.begin(9600);
   
 }
-/*
-void Motor_Contorl(int M_CMND)
+
+void Motor_Control(int M_CMND)
 {
   //This function contains the motors function or the Arduinos
   //Stop all motor functions
@@ -43,74 +44,96 @@ void Motor_Contorl(int M_CMND)
   //Turn clockwise
   else if(M_CMND == 1)
   {
-    digitalWrite(FR1,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
+    digitalWrite(FL1,LOW);
+    digitalWrite(FL2,HIGH);
+    digitalWrite(BL1,LOW);
+    digitalWrite(BL2,HIGH);
+    digitalWrite(FR1,LOW);
+    digitalWrite(FR2,HIGH);
+    digitalWrite(BR1,HIGH);
+    digitalWrite(BR2,LOW); 
   }
 
   //Turn anti-clockwise
   else if(M_CMND == 2)
   {
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
+    digitalWrite(FL1,HIGH);
+    digitalWrite(FL2,LOW);
+    digitalWrite(BL1,HIGH);
+    digitalWrite(BL2,LOW);
+    digitalWrite(FR1,HIGH);
+    digitalWrite(FR2,LOW);
+    digitalWrite(BR1,LOW);
+    digitalWrite(BR2,HIGH);
   }
 
   //Move forward
   else if(M_CMND == 3)
   {
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
+    digitalWrite(FL1,LOW);
+    digitalWrite(FL2,HIGH);
+    digitalWrite(BL1,LOW);
+    digitalWrite(BL2,HIGH);
+    digitalWrite(FR1,HIGH);
+    digitalWrite(FR2,LOW);
+    digitalWrite(BR1,LOW);
+    digitalWrite(BR2,HIGH);
   }
 
   //Move backward
   else if(M_CMND == 4)
   {
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
-    digitalWrite(,);
+    digitalWrite(FL1,HIGH);
+    digitalWrite(FL2,LOW);
+    digitalWrite(BL1,HIGH);
+    digitalWrite(BL2,LOW);
+    digitalWrite(FR1,LOW);
+    digitalWrite(FR2,HIGH);
+    digitalWrite(BR1,HIGH);
+    digitalWrite(BR2,LOW);
   }
+}
+
+void loop() 
+{
+  analogWrite(ENABLE,70);
+  
+  if(Serial3.available() > 0)
+  {
+    int data = Serial3.read() - '0';
+    Motor_Control(data);
+  }
+  delay(10);
+}
+/*
+void setup()
+{
+  pinMode(13,OUTPUT);
+  Serial3.begin(9600);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  if(Serial3.available())
+  {
+    int data = Serial3.read() - '0'; 
+    Serial.write(data);
+    
+    if(data == 1)
+    {
+      Serial.print('a');
+      digitalWrite(13,HIGH);
+    }
+    else
+    {
+      Serial.print('b');
+      digitalWrite(13,HIGH);
+    }
+  }
+  //digitalWrite(13,HIGH);
+  delay(100);
+  
 }
 */
-void loop() 
-{/*
-  if(Serial.available() > 0)
-  {
-    int cmd = int(Serial.read());
-    M_CMND(cmd);
-  }
-  */
-  analogWrite(ENABLE,60);
 
-  // put your main code here, to run repeatedly:
-  digitalWrite(FR1,LOW);
-  digitalWrite(FR2,HIGH);
-  digitalWrite(FL1,LOW);
-  digitalWrite(FL2,HIGH);
-  digitalWrite(BR1,HIGH);
-  digitalWrite(BR2,LOW);
-  digitalWrite(BL1,HIGH);
-  digitalWrite(BL2,LOW);  
-  delay(60);
-}

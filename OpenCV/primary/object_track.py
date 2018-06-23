@@ -2,10 +2,38 @@ import numpy as np
 import cv2 as cv
 import time
 import imutils
-import serial
+import bluetooth
 
 def nothing(x):
     pass
+
+#Setup variables for connecing with the HC-05
+target_name = "HC-05"
+target_address = None
+sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+port = 1
+
+print "Searching for the HC-05 module..."
+nearby_devices = bluetooth.discover_devices()
+
+for baddr in nearby_devices:
+    if target_name == bluetooth.lookup_name(baddr):
+        target_address = baddr
+        break
+    
+if target_address is not None:
+    print "Done!"
+    print "HC-05 found at the address",target_address
+    ans = raw_input("Would you like to connect to it?[y/n]")
+    if ans == 'y':
+        sock.connect((target_address, port))
+    else:
+        print "Terminating..."
+        exit()
+    
+else:
+    print "No bluetooth device found nearby. Please try again later"
+    exit()
 
 #cap = cv.VideoCapture('http://192.168.0.101:8080/video')
 cap = cv.VideoCapture(0)
@@ -24,10 +52,6 @@ cv.createTrackbar('U-V','Trackbars',255,255,nothing)
 #Check if the webcam has been opened
 if cap.isOpened() == False:
     print("There has been an error in opening the camera, moron.")
-
-#Setup variables for serial communication
-COM_PORT = '/dev/rfcomm0'
-ser = serial.Serial(COM_PORT,38400,timeout = 1)
 
 #Run when webcam is up and running
 while(cap.isOpened()):
@@ -102,19 +126,20 @@ while(cap.isOpened()):
         if dX > 10:
             #'1' is to turn cloackwise
             print "Bot shoudld turn right"
-            ser.write('1')
+            sock.send('1')
+            
 
             
         elif dX<-10:
             #'AC' is to turn anti-clockwise
             print "Bot shoudl turn left"
-            ser.write('2')
+            sock.send('2')
 
             
-        elif dX in range(-10,10):
+        elif dX in range(-10,11):
             #0 is to stop turning
-            ser.write('0')    
             print "Bot should stop"
+            sock.send('0')
 
         #Close when 'q' is pressed
         if cv.waitKey(1) & 0xFF == ord('q'):
@@ -125,5 +150,6 @@ while(cap.isOpened()):
 
 
 # When everything is done release the capture and close the windows
+sock.close()
 cap.release()
 cv.destroyAllWindows()
